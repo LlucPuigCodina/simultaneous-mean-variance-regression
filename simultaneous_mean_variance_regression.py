@@ -72,7 +72,7 @@ def constr(X, S, gamma):
         S (function): Sd function. See SR-SS Assumptions 2 and 3 that it must 
                         fulfill.
     """
-    return( S(X @ gamma) )    
+    return(S(X@gamma))    
 
 def fit(Y, X, S, gamma0):
     """Optimization via Constrained Optimization BY Linear Approximation.
