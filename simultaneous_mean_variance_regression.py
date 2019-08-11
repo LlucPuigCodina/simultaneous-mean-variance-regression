@@ -26,7 +26,7 @@ def Omega(X, S, gamma):
         gamma (np.array): column vector of size k containing the guess for the
                             unknown conditionalvariance parameters.
         S (function): Sd function. See SR-SS Assumptions 2 and 3 that it must 
-                        fulfill.
+                        fulfil.
     """
     return(np.diag(S(X @ gamma)))
     
@@ -40,7 +40,7 @@ def beta(Y, X, S, gamma):
         gamma (np.array): column vector of size k containing the guess for the
                             unknown conditional variance parameters.
         S (function): Sd function. See SR-SS Assumptions 2 and 3 that it must
-                        fulfill.
+                        fulfil.
     """
     Omega_inv = np.linalg.inv(Omega(X, S, gamma))    
     return(np.linalg.inv(X.T@Omega_inv@X)@X.T@Omega_inv@Y)
@@ -55,7 +55,7 @@ def loss(Y, X, S, gamma):
         gamma (np.array): column vector of size k containing the guess for the
                             unknown conditionalvariance parameters.
         S (function): Sd function. See SR-SS Assumptions 2 and 3 that it must 
-                        fulfill.
+                        fulfil.
     """ 
     n = np.size(Y)  
     sd = S(X@gamma)
@@ -67,10 +67,10 @@ def constr(X, S, gamma):
 
     Args:
         X (np.array): n by k matrix containing regressors.
-        gamma(np.array):  column vector of size k containing the guess for the 
+        gamma (np.array):  column vector of size k containing the guess for the 
                             unknown conditional variance parameters.
         S (function): Sd function. See SR-SS Assumptions 2 and 3 that it must 
-                        fulfill.
+                        fulfil.
     """
     return(S(X@gamma))    
 
@@ -84,7 +84,7 @@ def fit(Y, X, S, gamma0):
                                 guess for the unknown conditional variance 
                                 parameters.
         S (function): Sd function. See SR-SS Assumptions 2 and 3 that it must
-                        fulfill.
+                        fulfil.
                         
     Return:
         gamma (np.array): column vector of size k containing the estimated
