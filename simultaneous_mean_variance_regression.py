@@ -103,13 +103,14 @@ def fit(Y, X, S, gamma0):
     
     
 #Toy example 
-
+    
+np.random.seed(777)
 n = 500
 beta_true  = np.array([10,3])
 gamma_true = np.array([1,1]) 
 X = np.array([np.ones(n),
                np.random.uniform(0,50,n)]).T
-## Linear conditional standard deviation, S, function.
+## Linear conditional standard deviation function.
 def S(i): return(i)
 
 Y = np.full(n, np.nan)
