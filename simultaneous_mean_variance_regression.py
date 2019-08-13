@@ -29,7 +29,8 @@ def Omega(X, S, gamma):
         S (function): Sd function. See SR-SS Assumptions 2 and 3 that it must 
                         fulfil.
     """
-    return np.diag(S(X @ gamma))
+    n = X.shape[0]
+    return S(X@gamma)*np.identity(n)
     
 def beta(Y, X, S, gamma):
     """Obtain estimated Beta (np.array): a column vector of size n containing 
@@ -58,13 +59,12 @@ def loss(Y, X, S, gamma, grad):
         S (function): Sd function. See SR-SS Assumptions 2 and 3 that it must 
                         fulfil.
     """ 
-    n = np.size(Y)  
+    n = X.shape[0]
     sd = S(X@gamma)
-    err = Y - (X@beta(Y, X, S, gamma))              
+    err = Y - (X@beta(Y, X, S, gamma))                
     return (1/n)*sum(((1/2)*np.ones(n))*(np.square(err/sd) + np.ones(n))*sd)
     
-def constr(X, S, result, gamma, grad):
-    
+def constr(X, S, result, gamma, grad):  
     """Value of the constraint (np.array). All standard deviation estimates
         should be non-zero.
 
@@ -75,11 +75,13 @@ def constr(X, S, result, gamma, grad):
         S (function): Sd function. See SR-SS Assumptions 2 and 3 that it must 
                         fulfil.
     """
-    result = -S(X@gamma) #constraint set up is <= 0, so use negative sign. 
+    n = X.shape[0]
+    #constraint set up is <= 0, so use negative sign. 
+    result = -S(X@gamma) + np.full(n,np.finfo(float).eps) 
     return result
 
 def fit(Y, X, S, gamma0):
-    """Optimization via Constrained Optimization BY Linear Approximation.
+    """Optimization via [inser algorithm].
 
     Args:
         Y (np.array): column vector of size n containing the regressand.
@@ -99,43 +101,37 @@ def fit(Y, X, S, gamma0):
     opt_constr = partial(constr, X, S)
     opt = nlopt.opt(nlopt.LN_COBYLA, k)
     opt.set_min_objective(opt_loss)
-    opt.add_inequality_mconstraint(opt_constr, np.full(n,np.finfo(float).eps))
+    opt.add_inequality_mconstraint(opt_constr, np.full(n,0))
     opt.set_ftol_rel(1e-4)
     gamma = opt.optimize(gamma0)
     return gamma   
      
 #%% Toy example 
-
-#Y = beta0 + beta1*x + sigma(gamma0 + gamma1*x)*epsilon; epsilon is N(0,1)
-# and beta0 = 10; beta1 = 3; gamma0 = 1 and gamma1 = 1
-    
+ 
 n = 50
 beta_true  = np.array([10,3])
-gamma_true = np.array([1,1]) 
+
+gamma_true = np.array([0,1]) 
+
 X = np.array([np.ones(n),
-               np.random.uniform(0,50,n)]).T
+               np.random.uniform(0,50,n)]).T # n by k matrix
 ## Linear conditional standard deviation function.
 def S(i): return(i)
 
 Y = np.full(n, np.nan)
 for i in range(n):
-    Y[i] = np.random.normal(loc = X[i].T@beta_true, scale = S(X[i]@gamma_true))
-
-fig, ax = plt.subplots()
-ax.plot(X[:,1],Y, 'ro')
-ax.set(ylabel = 'Y', xlabel = 'X',
-         title = 'Toy dataset.  Linear conditional Sd function.')
-plt.show()
+    Y[i] = np.random.normal(loc = X[i,:]@beta_true, scale = S(X[i]@gamma_true))
 
 ## Test of beta function.
 ## From the true gamma we can directly obtain the true beta parameters.
 print('True beta: ', beta_true)
-print('OLS beta: ', np.linalg.inv(X.T@X)@X.T@Y)
+print('OLS beta: ', (np.linalg.inv(X.T@X)@(X.T)@Y))
 print('SMVR beta: ', beta(Y, X, S, gamma_true))
 
 ## Test of fit function
 ## Full estimation of both beta and gamma
-gamma0 = [1,9]
+gamma0 = np.array([1,9])
+
 gamma_hat = fit(Y, X, S, gamma0)
 beta_hat = beta(Y,X,gamma_hat, S)
 print('True beta: ', beta_true) 
