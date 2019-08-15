@@ -61,7 +61,7 @@ def loss(Y, X, S, gamma, grad):
     sd = S(X@gamma)
     beta_ = beta(Y, X, S, gamma)
     err = Y - (X@beta_)
-    return (1/n)*sum(((1/2)*np.ones(n))*(np.square(err/sd) + np.ones(n))*sd)
+    return sum(((1/2)*np.ones(n))*(np.square(err/sd) + np.ones(n))*sd)
     
 def constr(X, S, result, gamma, grad):  
      """Value of the constraint (np.array). All standard deviation estimates
@@ -105,79 +105,3 @@ def fit(Y, X, S, gamma0):
     gamma = opt.optimize(gamma0)
     return gamma   
      
-#%% Toy example 
-
-# Exponential case
-n = 300
-
-beta_true  = np.array([10, 3])
-
-gamma_true = np.array([3, -1]) 
-
-X = np.array([np.ones(n),
-               np.random.uniform(0, 50, n)]).T # n by k matrix
-
-def S(t): return np.exp(t)
-
-Y = np.full(n, np.nan)
-for i in range(n):
-    Y[i] = np.random.normal(loc = X[i,:]@beta_true, scale = S(X[i]@gamma_true))
-
-## Test of beta function.
-## From the true gamma we can directly obtain the true beta parameters.
-print('\n\n--- Test 1: Find beta_hat knowing the true gamma, exponential case ---')
-
-print('True beta: ', beta_true)
-print('OLS beta: ', (np.linalg.inv(X.T@X)@(X.T)@Y))
-print('SMVR beta: ', beta(Y, X, S, gamma_true))
-
-
-## Test of fit function
-## Full estimation of both beta and gamma
-gamma0 = np.array([-6, 5]) #initial guess
-gamma_hat = fit(Y, X, S, gamma0)
-beta_hat = beta(Y, X, S, gamma_hat)
-print('\n\n--- Test 2: Find beta_hat and gamma_hat, exponential case ---')
-print('True beta: ', beta_true)
-print('True gamma: ', gamma_true) 
-print('OLS beta: ', np.linalg.inv(X.T@X)@X.T@Y) 
-print('SMVR beta: ', beta_hat)
-print('SMVR gamma: ', gamma_hat)
-
-
-# Linear case
-
-beta_true  = np.array([3, 2])
-
-gamma_true = np.array([1.5 ,1]) 
-
-X = np.array([np.ones(n),
-               np.random.uniform(-1, 5, n)]).T
-
-def S(t): return t
-
-Y = np.full(n, np.nan)
-for i in range(n):
-    Y[i] = np.random.normal(loc = X[i,:]@beta_true, scale = S(X[i]@gamma_true))
-
-## Test of beta function.
-## From the true gamma we can directly obtain the true beta parameters.
-print('\n\n--- Test 2: Find beta_hat knowing the true gamma, linear case ---')
-print('True beta: ', beta_true)
-print('OLS beta: ', (np.linalg.inv(X.T@X)@(X.T)@Y))
-print('SMVR beta: ', beta(Y, X, S, gamma_true))
-
-## Test of fit function
-## Full estimation of both beta and gamma
-gamma0 = np.array([-2,5]) #initial guess
-gamma_hat = fit(Y, X, S, gamma0)
-beta_hat = beta(Y, X, S, gamma_hat)
-print('\n\n--- Test 4: Find beta_hat and gamma_hat, linear case ---')
-print('True beta: ', beta_true)
-print('True gamma: ', gamma_true) 
-print('OLS beta: ', np.linalg.inv(X.T@X)@X.T@Y) 
-print('SMVR beta: ', beta_hat)
-print('SMVR gamma: ', gamma_hat)
-
-
-
