@@ -3,7 +3,7 @@
 
 Python implementation of [arXiv:1804.01631](https://arxiv.org/abs/1804.01631) **[econ.EM]** by Lluc Puig Codina
 
-CAUTION: The optimization might converge to a wild value depending on the chosen initial value which might violate the non-linear constraint. To see this, set `gamma_0` = [1,0].
+CAUTION: The optimization might converge to a wild value depending on the chosen initial value which might violate the non-linear constraint. To see this, set `gamma_0` = [1,0]  in the linear case. The linear case seems to be quite unstable, and requiring much more optimization time than the exponential case.
 
 ---
 
@@ -75,7 +75,7 @@ print('SMVR gamma: ', gamma_hat)
     True gamma:  [ 3 -1]
     OLS beta:  [10.58268607  2.98178095]
     SMVR beta:  [10.  3.]
-    SMVR gamma:  [ 2.73763664 -0.90050297]
+    SMVR gamma:  [ 2.74382346 -0.9053656 ]
     
 
 
@@ -104,7 +104,7 @@ print('SMVR beta: ', smvr.beta(Y, X, S, gamma_true))
 
 ## Test of fit function
 ## Full estimation of both beta and gamma
-gamma0 = np.array([0,1]) #initial guess
+gamma0 = np.array([1,1]) #initial guess
 gamma_hat = smvr.fit(Y, X, S, gamma0)
 beta_hat = smvr.beta(Y, X, S, gamma_hat)
 print('\n\n----------------------------------------')
@@ -134,5 +134,5 @@ print('SMVR gamma: ', gamma_hat)
     True gamma:  [0.5 0.2]
     OLS beta:  [1.90964476 0.55846447]
     SMVR beta:  [1.9159158  0.55445541]
-    SMVR gamma:  [0.50984551 0.20833171]
+    SMVR gamma:  [0.50984555 0.20833171]
     
