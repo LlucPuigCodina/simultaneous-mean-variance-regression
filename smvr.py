@@ -61,7 +61,7 @@ def loss(Y, X, S, gamma, grad):
     sd = S(X@gamma)
     beta_ = beta(Y, X, S, gamma)
     err = Y - (X@beta_)
-    return sum(((1/2)*np.ones(n))*(np.square(err/sd) + np.ones(n))*sd)
+    return sum( np.full(n,(1/2))*(np.square(err)/sd) ) + sum( np.full(n,(1/2))*sd )
     
 def constr(X, S, result, gamma, grad):  
      """Value of the constraint (np.array). All standard deviation estimates
