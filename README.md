@@ -3,7 +3,7 @@
 
 Python implementation of [arXiv:1804.01631](https://arxiv.org/abs/1804.01631) **[econ.EM]** by Lluc Puig Codina
 
-CAUTION: The optimization might converge to a wild value if the chosen initial value violates the non-linear constraint. To see this, set `gamma_0` = [1,0]  in the linear case. The linear case seems to be quite unstable, and requiring much more optimization time than the exponential case.
+CAUTION: The optimization might converge to a wild value if the chosen initial value violates the non-linear constraint. To see this, set `gamma_0` = [1,0]  in the linear case. The linear case seems to be quite unstable, requiring much more optimization time than the exponential case.
 
 ---
 
